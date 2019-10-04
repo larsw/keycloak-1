@@ -1,7 +1,7 @@
-FROM alpine:3.8
+FROM alpine:3.10.2
 
 ENV NAME keycloak-gatekeeper
-ENV KEYCLOAK_VERSION 6.0.1
+ENV KEYCLOAK_VERSION 7.0.0
 ENV GOOS linux
 ENV GOARCH amd64
 
@@ -10,12 +10,11 @@ LABEL Name=keycloak-gatekeeper \
       Url=https://github.com/keycloak/keycloak-gatekeeper \
       Help=https://issues.jboss.org/projects/KEYCLOAK
 
-RUN apk add --no-cache ca-certificates curl tar
-
 WORKDIR "/opt"
 
-RUN curl -fssL "https://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/gatekeeper/$NAME-$GOOS-$GOARCH.tar.gz" | tar -xz && chmod +x /opt/$NAME
-
-RUN apk del curl tar
+RUN apk update && apk add --no-cache ca-certificates curl tar && \
+    curl -fssL "https://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/gatekeeper/$NAME-$GOOS-$GOARCH.tar.gz" | \
+    tar -xz && chmod +x /opt/$NAME && \
+    apk del curl tar
 
 ENTRYPOINT [ "/opt/keycloak-gatekeeper" ]
